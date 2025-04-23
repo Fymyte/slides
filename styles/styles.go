@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/glamour"
+	"github.com/charmbracelet/glamour/ansi"
+	"github.com/charmbracelet/glamour/styles"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/termenv"
 )
@@ -58,15 +60,24 @@ func JoinVertical(top, bottom string, height int) string {
 // SelectTheme picks a glamour style config based
 // on the theme provided in the markdown header
 func SelectTheme(theme string) glamour.TermRendererOption {
+	var styleConfig ansi.StyleConfig
 	switch theme {
-	case "ascii":
-		return glamour.WithStyles(glamour.ASCIIStyleConfig)
-	case "light":
-		return glamour.WithStyles(glamour.LightStyleConfig)
-	case "dark":
-		return glamour.WithStyles(glamour.DarkStyleConfig)
-	case "notty":
-		return glamour.WithStyles(glamour.NoTTYStyleConfig)
+	case styles.AutoStyle:
+		return glamour.WithAutoStyle()
+	case styles.AsciiStyle:
+		styleConfig = styles.ASCIIStyleConfig
+	case styles.DarkStyle:
+		styleConfig = styles.DarkStyleConfig
+	case styles.LightStyle:
+		styleConfig = styles.LightStyleConfig
+	case styles.PinkStyle:
+		styleConfig = styles.PinkStyleConfig
+	case styles.NoTTYStyle:
+		styleConfig = styles.NoTTYStyleConfig
+	case styles.DraculaStyle:
+		styleConfig = styles.DraculaStyleConfig
+	case styles.TokyoNightStyle:
+		styleConfig = styles.DraculaStyleConfig
 	default:
 		var themeReader io.Reader
 		var err error
@@ -93,15 +104,17 @@ func SelectTheme(theme string) glamour.TermRendererOption {
 		// Should log a warning so the user knows we failed to read their theme file
 		return getDefaultTheme()
 	}
+
+	return glamour.WithStyles(styleConfig)
 }
 
 func getDefaultTheme() glamour.TermRendererOption {
 	if termenv.EnvNoColor() {
-		return glamour.WithStyles(glamour.NoTTYStyleConfig)
+		return glamour.WithStandardStyle("notty")
 	}
 
 	if !termenv.HasDarkBackground() {
-		return glamour.WithStyles(glamour.LightStyleConfig)
+		return glamour.WithStandardStyle("light")
 	}
 
 	return glamour.WithStylesFromJSONBytes(DefaultTheme)

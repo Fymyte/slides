@@ -16,7 +16,7 @@ func TestSelectTheme(t *testing.T) {
 		want    ansi.StyleConfig
 		wantErr bool
 	}{
-		{name: "Select dark theme", theme: "dark", want: glamour.DarkStyleConfig, wantErr: false},
+		{name: "Select dark theme", theme: "dark", want: glamour.getDefaultStyle("dark"), wantErr: false},
 		{name: "Select light theme", theme: "light", want: glamour.LightStyleConfig, wantErr: false},
 		{name: "Select ascii theme", theme: "ascii", want: glamour.ASCIIStyleConfig, wantErr: false},
 		{name: "Select notty theme", theme: "notty", want: glamour.NoTTYStyleConfig, wantErr: false},
